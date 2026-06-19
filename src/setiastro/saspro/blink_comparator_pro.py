@@ -3709,30 +3709,6 @@ class BlinkTab(QWidget):
         # Update zoom panel to viewport center after layout settles
         QTimer.singleShot(0, self._update_zoom_panel_to_viewport_center)
 
-    def wheelEvent(self, event: QWheelEvent):
-        # This handler catches wheel events that bubble up to the BlinkTab
-        # widget itself — e.g. when the file tree hits the top/bottom of its
-        # scrollable content and Qt passes the unhandled wheel event to the
-        # parent. Only zoom the preview if the cursor is actually over the
-        # preview's scroll area; otherwise ignore so nothing is zoomed just
-        # because some other widget ran out of room to scroll.
-        try:
-            pos_in_self = event.position().toPoint()
-        except AttributeError:
-            pos_in_self = event.pos()
-
-        if not self.scroll_area.geometry().contains(pos_in_self):
-            event.ignore()
-            return
-
-        # Check the vertical delta to determine zoom direction.
-        if event.angleDelta().y() > 0:
-            self.zoom_in()
-        else:
-            self.zoom_out()
-        # Accept the event so it isn’t propagated further (e.g. to the scroll area).
-        event.accept()
-
 
     def zoom_in(self):
         """Increase the zoom level and refresh the image."""
